@@ -1,9 +1,9 @@
 {
-  "name": "TDD",
+  "name": "tdd",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "directories": {
+    "lib": "lib",
     "test": "tests"
   },
   "scripts": {
@@ -11,7 +11,7 @@
     "eslint": "./node_modules/eslint/bin/eslint.js ./lib/*.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ophus Wong",
   "license": "ISC",
   "devDependencies": {
     "babel-cli": "^6.22.2",
@@ -23,5 +23,14 @@
     "eslint": "^4.9.0",
     "mocha": "^3.4.2",
     "webpack": "^3.3.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OphDub/complete-me.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OphDub/complete-me/issues"
+  },
+  "homepage": "https://github.com/OphDub/complete-me#readme",
+  "description": ""
 }

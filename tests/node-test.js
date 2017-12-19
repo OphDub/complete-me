@@ -5,24 +5,23 @@ describe('NODE', () => {
   let node;
 
   beforeEach(() => {
-    node = new Node('pizza')
+    node = new Node()
   })
 
   it('should be a thing', () => {
-    expect(node).to.exist
+    expect(node).to.exist;
   })
 
-  it('should default left and right to null', () => {
-    expect(node.left).to.eq(null);
-    expect(node.right).to.eq(null);
+  it('should start with no children by default', () => {
+    expect(node.children).to.deep.equal({});
   });
 
   it('should not be a word by default', () => {
-    expect(node.isWord).to.eq(false);
+    expect(node.wordEnd).to.eq(null);
   });
 
-  it('should take data and assign it to data prop', () => {
-    expect(node.data).to.equal('pizza')
-  })
+  it.skip('should take data and assign it to data prop', () => {
+    expect(node.value).to.equal('p');
+  });
 
 });

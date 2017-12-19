@@ -5,10 +5,10 @@ describe('NODE', () => {
   let node;
 
   beforeEach(() => {
-    node = new Node()
+    node = new Node('pizza')
   })
 
-  it('should be a thing', () => {
+  it('should exist', () => {
     expect(node).to.exist;
   })
 
@@ -20,8 +20,7 @@ describe('NODE', () => {
     expect(node.wordEnd).to.eq(null);
   });
 
-  it.skip('should take data and assign it to data prop', () => {
-    expect(node.value).to.equal('p');
+  it('should have a value', () => {
+    expect(node.value).to.equal('pizza');
   });
-
 });

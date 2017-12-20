@@ -79,5 +79,21 @@ describe('Trie', () => {
         expect(suggestion).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle'])
       });
     });
+
+    describe('SELECT', () => {
+      it('should move selected words to the front of suggested words', ()=> {
+        trie.populate(dictionary);
+
+        let suggestion1 = trie.suggest('piz');
+        //=> ["pize", "pizza", "pizzeria", "pizzicato", "pizzle", ...]
+        expect(suggestion1).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
+
+        trie.select('pizzeria');
+
+        let suggestion2 = trie.suggest('piz');
+        // => ["pizzeria", "pize", "pizza", "pizzicato", "pizzle", ...]
+        expect(suggestion2).to.deep.eq([ 'pizzeria', 'pize', 'pizza', 'pizzicato', 'pizzle']);
+      });
+    })
   });
 });

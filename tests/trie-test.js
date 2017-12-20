@@ -1,6 +1,10 @@
 import { expect } from 'chai';
 import Node from '../lib/node';
 import Trie from '../lib/trie';
+import fs from 'fs';
+
+const text = "/usr/share/dict/words"
+const dictionary = fs.readFileSync(text).toString().trim().split('\n')
 
 describe('Trie', () => {
   let trie;
@@ -46,7 +50,7 @@ describe('Trie', () => {
       expect(suggestion).to.eq(null);
     });
 
-    it.only('should provide a suggestion in an array', () => {
+    it('should provide a suggestion in an array', () => {
       trie.insert('pizza');
 
       let suggestion = trie.suggest('piz');
@@ -54,7 +58,7 @@ describe('Trie', () => {
       expect(suggestion).to.deep.eq(['pizza']);
     });
 
-    it.only('should return words with the same root', () => {
+    it('should return words with the same root', () => {
       trie.insert('pizza');
       trie.insert('pizzas');
       trie.insert('pizzeria');
@@ -63,6 +67,17 @@ describe('Trie', () => {
       let suggestion = trie.suggest('piz');
 
       expect(suggestion).to.deep.eq(['pizza', 'pizzas', 'pizzaz', 'pizzeria']);
-    })
+    });
+
+    describe('DICTIONARY', () => {
+      it.skip('should have a populate method which can pull in an array of words', () => {
+        trie.populate(dictionary);
+
+        expect(trie.count).to.eq(235886);
+
+        let suggestion = trie.suggest('piz');
+        expect(suggestion).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle'])
+      });
+    });
   });
 });

@@ -10,7 +10,7 @@ describe('NODE', () => {
 
   it('should exist', () => {
     expect(node).to.exist;
-  })
+  });
 
   it('should start with no children by default', () => {
     expect(node.children).to.deep.equal({});

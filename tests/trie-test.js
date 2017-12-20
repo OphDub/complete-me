@@ -47,18 +47,22 @@ describe('Trie', () => {
     });
 
     it.only('should provide a suggestion in an array', () => {
-      trie.insert('amp');
-      let suggestion = trie.suggest('a');
-      expect(suggestion).to.deep.eq(['amp']);
+      trie.insert('pizza');
 
-      // trie.insert('pizza');
-      // let suggestion = trie.suggest('piz');
+      let suggestion = trie.suggest('piz');
 
-      // expect(suggestion).to.deep.eq(['pizza']);
-
-      // trie.insert('pizzeria');
-
-      // expect(suggestion).to.deep.eq(['pizza', 'pizzeria']);
+      expect(suggestion).to.deep.eq(['pizza']);
     });
+
+    it.only('should return words with the same root', () => {
+      trie.insert('pizza');
+      trie.insert('pizzas');
+      trie.insert('pizzeria');
+      trie.insert('pizzaz');
+
+      let suggestion = trie.suggest('piz');
+
+      expect(suggestion).to.deep.eq(['pizza', 'pizzas', 'pizzaz', 'pizzeria']);
+    })
   });
 });

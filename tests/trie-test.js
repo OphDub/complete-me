@@ -71,7 +71,7 @@ describe('Trie', () => {
   });
 
   describe('DICTIONARY', () => {
-    it.skip('should have a populate method which can pull in an array of words', () => {
+    it('should have a populate method which can pull in an array of words', () => {
       trie.populate(dictionary);
 
       expect(trie.count).to.eq(235886);
@@ -82,7 +82,7 @@ describe('Trie', () => {
   });
 
   describe('SELECT', () => {
-    it('should move selected words to the front of suggested words', ()=> {
+    it('should move selected words to the front of suggested words', () => {
       trie.populate(dictionary);
 
       let suggestion1 = trie.suggest('piz');
@@ -94,6 +94,38 @@ describe('Trie', () => {
       let suggestion2 = trie.suggest('piz');
       // => ["pizzeria", "pize", "pizza", "pizzicato", "pizzle", ...]
       expect(suggestion2).to.deep.eq([ 'pizzeria', 'pize', 'pizza', 'pizzicato', 'pizzle']);
+    })
+
+    it('should allow multiple words to be selected', () => {
+      trie.populate(dictionary);
+
+      let suggestion1 = trie.suggest('piz');
+      //=> ["pize", "pizza", "pizzeria", "pizzicato", "pizzle", ...]
+      expect(suggestion1).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
+      console.log('before', suggestion1);
+      trie.select('pizzeria');
+      trie.select('pizzacato');
+      let suggestion2 = trie.suggest('piz');
+      console.log(currNode.value.selectCount);
+      console.log('after', suggestion2);
+      // => [ 'pizzeria', 'pizzicato', 'pize', 'pizza', 'pizzle']
+      expect(suggestion2).to.deep.eq([ 'pizzeria', 'pizzicato', 'pize', 'pizza', 'pizzle']);
+    })
+  });
+
+  describe('DELETE', () => {
+    it('should delete words from suggested words', () => {
+      trie.populate(dictionary);
+
+      let suggestion1 = trie.suggest('piz');
+      // => ['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']
+      expect(suggestion1).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
+
+      trie.delete('pizzle');
+
+      let suggestion2 = trie.suggest('piz');
+      // => ['pize', 'pizza', 'pizzeria', 'pizzicato']
+      expect(suggestion2).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato']);
     })
   });
 });

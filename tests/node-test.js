@@ -23,4 +23,8 @@ describe('NODE', () => {
   it('should have a value', () => {
     expect(node.value).to.equal('pizza');
   });
+
+  it('should not be selected by default', () => {
+    expect(node.selectCount).to.equal(0);
+  });
 });

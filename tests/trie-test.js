@@ -26,6 +26,10 @@ describe('Trie', () => {
   });
 
   describe('INSERT', () => {
+    it('should be a function', () => {
+      expect(trie.insert('cat')).to.be.a.function;
+    })
+
     it('should add items and increment the count', () => {
       trie.insert('pizza');
 
@@ -44,11 +48,21 @@ describe('Trie', () => {
       expect(trie.root.children[1]).to.not.exist;
     })
 
+    it('should return null if provided a number', () => {
+      expect(trie.insert(2)).to.eq(null);
+    })
+
     it('should add nodes which have values that match the string', () => {
       trie.insert('it');
 
       expect(trie.root.children['i']).hasOwnProperty('i');
       expect(trie.root.children['i'].children['t']).hasOwnProperty('t');
+    })
+
+    it('should mark the end of a word', () => {
+      trie.insert('it');
+
+      expect(trie.root.children['i'].children['t'].wordEnd).to.eq(true);
     })
 
     it('should not add duplicate items', () => {
@@ -64,13 +78,17 @@ describe('Trie', () => {
   });
 
   describe('SUGGEST', () => {
+    it('should be a function', () => {
+      expect(trie.suggest('pa')).to.be.a.function;
+    })
+
     it('should return null if there are no suggestions', () => {
       let suggestion = trie.suggest('dog');
 
       expect(suggestion).to.eq(null);
     })
 
-    it('should provide a suggestion in an array', () => {
+    it('should return suggestions in an array', () => {
       trie.insert('pizza');
 
       let suggestion = trie.suggest('piz');
@@ -78,7 +96,18 @@ describe('Trie', () => {
       expect(suggestion).to.deep.eq(['pizza']);
     })
 
-    it('should return words with the same root', () => {
+    it('should return suggestions if provided a full word', () => {
+      trie.insert('pizza');
+      trie.insert('pizzas');
+      trie.insert('pizzeria');
+      trie.insert('pizzaz');
+
+      let suggestion = trie.suggest('pizza');
+
+      expect(suggestion).to.deep.eq(['pizza', 'pizzas', 'pizzaz']);
+    })
+
+    it('should return words with the same root or prefix', () => {
       trie.insert('pizza');
       trie.insert('pizzas');
       trie.insert('pizzeria');
@@ -95,6 +124,18 @@ describe('Trie', () => {
       trie.populate(dictionary);
     })
 
+    it('should be a function', () => {
+      expect(trie.populate(dictionary)).to.be.a.function;
+    })
+
+    it('should not accept numbers', () => {
+      let numArray = [1,2,3];
+
+      trie.populate(numArray)
+
+      expect(trie.count).to.eq(235886);
+    })
+
     it('should count the words which it populates into the trie', () => {
       expect(trie.count).to.eq(235886);
     })
@@ -109,6 +150,14 @@ describe('Trie', () => {
   describe('SELECT', () => {
     beforeEach(() =>{
       trie.populate(dictionary);
+    })
+
+    it('should be a function', () => {
+      expect(trie.select('pizza')).to.be.a.function;
+    })
+
+    it('should not select words which are not in the trie', () => {
+      expect(trie.select('piy')).to.eq(null);
     })
 
     it('should move selected words to the front of suggested words', () => {
@@ -162,6 +211,14 @@ describe('Trie', () => {
       trie.populate(dictionary);
     })
 
+    it('should be a function', () => {
+      expect(trie.delete('pizzle')).to.be.a.function;
+    })
+
+    it('should return null if attempting to delete words not in the trie', () => {
+      expect(trie.delete('piy')).to.eq(null);
+    })
+
     it('should delete words from the array of suggested words', () => {
       let suggestion = trie.suggest('piz');
       expect(suggestion).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
@@ -178,6 +235,17 @@ describe('Trie', () => {
       trie.delete('pizzle');
 
       expect(deletedNode.wordEnd).to.eq(null);
+    })
+
+    it('should delete multiple words', () => {
+      let suggestion = trie.suggest('piz');
+      expect(suggestion).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
+
+      trie.delete('pizzle');
+      trie.delete('pizza');
+
+      suggestion = trie.suggest('piz');
+      expect(suggestion).to.deep.eq(['pize', 'pizzeria', 'pizzicato']);
     })
   });
 });

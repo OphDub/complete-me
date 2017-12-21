@@ -22,7 +22,3 @@ Trie recommendations would no longer include a suggestion if it was deleted by a
 
 #### Phase 6: Package Trie into a Node Module
 Package the trie into a node module for use in future projects.
-
-## Authors
-
-* [**Ophus Wong**](https://github.com/ophdub) -*Contributor for this repo*-

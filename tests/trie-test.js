@@ -53,9 +53,6 @@ describe('Trie', () => {
 
     it('should not add duplicate items', () => {
       trie.insert('pizza');
-
-      expect(trie.count).to.equal(1);
-
       trie.insert('pizzle');
 
       expect(trie.count).to.equal(2);
@@ -67,7 +64,7 @@ describe('Trie', () => {
   });
 
   describe('SUGGEST', () => {
-    it.only('should return null if there are no suggestions', () => {
+    it('should return null if there are no suggestions', () => {
       let suggestion = trie.suggest('dog');
 
       expect(suggestion).to.eq(null);
@@ -93,63 +90,94 @@ describe('Trie', () => {
     })
   });
 
-  describe('DICTIONARY', () => {
-    it('should have a populate method which can pull in an array of words', () => {
+  describe('POPULATE', () => {
+    beforeEach(() =>{
       trie.populate(dictionary);
+    })
 
+    it('should count the words which it populates into the trie', () => {
       expect(trie.count).to.eq(235886);
+    })
 
+    it('should be able to suggest words from the array it accepted', () => {
       let suggestion = trie.suggest('piz');
 
-      expect(suggestion).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle'])
+      expect(suggestion).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
     })
   });
 
   describe('SELECT', () => {
-    it('should move selected words to the front of suggested words', () => {
+    beforeEach(() =>{
       trie.populate(dictionary);
+    })
 
-      let suggestion1 = trie.suggest('piz');
-      //=> ["pize", "pizza", "pizzeria", "pizzicato", "pizzle", ...]
-      expect(suggestion1).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
+    it('should move selected words to the front of suggested words', () => {
+      let suggestion = trie.suggest('piz');
+      expect(suggestion).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
 
       trie.select('pizzeria');
 
-      let suggestion2 = trie.suggest('piz');
-      // => ["pizzeria", "pize", "pizza", "pizzicato", "pizzle", ...]
-      expect(suggestion2).to.deep.eq([ 'pizzeria', 'pize', 'pizza', 'pizzicato', 'pizzle']);
+      suggestion = trie.suggest('piz');
+      expect(suggestion).to.deep.eq([ 'pizzeria', 'pize', 'pizza', 'pizzicato', 'pizzle']);
+    })
+
+    it('should allow words to be selected multiple times', () => {
+      let endNode = trie.traverse('pizzeria');
+      let suggestion = trie.suggest('piz');
+
+      expect(suggestion).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
+      expect(endNode.selectCount).to.equal(0);
+
+      trie.select('pizzeria');
+      trie.select('pizzeria');
+
+      endNode = trie.traverse('pizzeria');
+      suggestion = trie.suggest('piz');
+
+      expect(endNode.selectCount).to.equal(2);
+      expect(suggestion).to.deep.eq([ 'pizzeria', 'pize', 'pizza', 'pizzicato', 'pizzle']);
     })
 
     it('should allow multiple words to be selected', () => {
-      trie.populate(dictionary);
+      let suggestion = trie.suggest('pizz');
 
-      let suggestion1 = trie.suggest('piz');
-      //=> ["pize", "pizza", "pizzeria", "pizzicato", "pizzle", ...]
-      expect(suggestion1).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
-      console.log('before', suggestion1);
-      trie.select('pizzeria');
-      trie.select('pizzacato');
-      let suggestion2 = trie.suggest('piz');
-      console.log(currNode.value.selectCount);
-      console.log('after', suggestion2);
-      // => [ 'pizzeria', 'pizzicato', 'pize', 'pizza', 'pizzle']
-      expect(suggestion2).to.deep.eq([ 'pizzeria', 'pizzicato', 'pize', 'pizza', 'pizzle']);
+      expect(suggestion).to.deep.equal(['pizza', 'pizzeria', 'pizzicato', 'pizzle']);
+
+      trie.select('pizzle');
+      trie.select('pizzle');
+      trie.select('pizzle');
+      trie.select('pizzle');
+
+      trie.select('pizzicato');
+      trie.select('pizzicato');
+
+      suggestion = trie.suggest('pizz');
+
+      expect(suggestion).to.deep.equal(['pizzle', 'pizzicato', 'pizza', 'pizzeria']);
     })
   });
 
   describe('DELETE', () => {
-    it('should delete words from suggested words', () => {
+    beforeEach (() => {
       trie.populate(dictionary);
+    })
 
-      let suggestion1 = trie.suggest('piz');
-      // => ['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']
-      expect(suggestion1).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
+    it('should delete words from the array of suggested words', () => {
+      let suggestion = trie.suggest('piz');
+      expect(suggestion).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato', 'pizzle']);
 
       trie.delete('pizzle');
 
-      let suggestion2 = trie.suggest('piz');
-      // => ['pize', 'pizza', 'pizzeria', 'pizzicato']
-      expect(suggestion2).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato']);
+      suggestion = trie.suggest('piz');
+      expect(suggestion).to.deep.eq(['pize', 'pizza', 'pizzeria', 'pizzicato']);
+    })
+
+    it('should change the wordEnd property of the node when a word is deleted', () => {
+      let deletedNode = trie.traverse('pizzle');
+
+      trie.delete('pizzle');
+
+      expect(deletedNode.wordEnd).to.eq(null);
     })
   });
 });
